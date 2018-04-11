@@ -15,7 +15,7 @@ using namespace omnetpp;
 class AP : public cSimpleModule
 {
 private:
-    enum{PROBE_REQUEST,REQUEST_INFO,SCHEDULER,REQUEST_ACKNOWLEDGEMENT};
+    enum{PROBE_REQUEST,REQUEST_INFO,SCHEDULER,REQUEST_ACK};
     cMessage *probeRequest;
     cMessage *requestInfo;
     cMessage *scheduler;

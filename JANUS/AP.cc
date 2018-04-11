@@ -4,17 +4,18 @@
  *  Created on: Apr 9, 2018
  *      Author: matt
  */
+#include "AP.h"
+
 void AP::initialize()
 {
     cModule* c = getModuleByPath("BaseNetwork");
-
-
 
     //Message Types
     probeRequest = new cMessage("probeRequest", PROBE_REQUEST);
     requestInfo = new cMessage("requestInfo",REQUEST_INFO);
     scheduler = new cMessage("scheduler",SCHEDULER);
     requestAck = new cMessage("requestAck",REQUEST_ACK);
+
 
 }
 
@@ -25,10 +26,35 @@ void AP::handleMessage(cMessage *msg)
 
     switch(msg -> getKind())
     {
-        case()
+        case PROBE_REQUEST:
         {
-
+            cMessage *txProbe = new cMessage("txProbe");
+            send(txProbe, "out");
         }
+
+        case REQUEST_INFO:
+        {
+            cMessage *txRequestInfo = new cMessage("txRequestInfo");
+            send(txRequestInfo, "out");
+        }
+
+        case SCHEDULER:
+        {
+            cMessage *scheduler = new cMessage("scheduler");
+            send(scheduler, "out");
+        }
+
+        case REQUEST_ACK:
+        {
+            cMessage *requestAck = new cMessage("requestAck");
+            send(requestAck, "out");
+        }
+
+        default:
+        {
+            break;
+        }
+
     }
 }
 
