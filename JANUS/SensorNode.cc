@@ -13,6 +13,7 @@ void SensorNode::initialize()
     //Message Types
     registerNode = new cMessage("registerNode", REGISTER_NODE);
     requestFlag = new cMessage("requestFlag", REQUEST_FLAGS);
+    replyRequestInfo = new cMessage("replyRequestInfo", RRI);
     dataPacket = new cMessage("dataPacket", DATA_PACKET);
     ackFlag = new cMessage("ackFlag", ACK_FLAG);
 
@@ -36,7 +37,15 @@ void SensorNode::handleMessage(cMessage *msg)
             cMessage *requestFlags = new cMessage("requestFlags");
             send(requestFlags, "out");
         }
-
+        
+        case RRI:
+        {
+            cMessage *replyRequestInfo = new cMessage("replyRequestInfo");
+            
+            replyRequestInfo -> addObject(interferenceInfo);
+            replyRequestInfor -> addObject(packetLength);
+            send(replyRequestInfo, "out");
+        }
         case DATA_PACKET:
         {
             cMessage *dataPacket = new cMessage("dataPacket");
@@ -56,5 +65,13 @@ void SensorNode::handleMessage(cMessage *msg)
     }
 }
 
+void SensorNode::determineInterference()
+{
 
+}
+
+void SensorNode::determinePacketLength()
+{
+
+}
 

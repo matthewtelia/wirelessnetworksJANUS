@@ -14,6 +14,18 @@ using namespace omnetpp;
 
 class WirelessChannel : public cSimpleModule
 {
+    private:
+        enum{REGISTER_NODE,REQUEST_FLAGS,RRI,DATA_PACKET,ACK_FLAG, PROBE_REQUEST, REQUEST_INFO, SCHEDULER, REQUEST_ACK};
+
+        cMessage *registerNode;
+        cMessage *requestFlag;
+        cMessage *dataPacket;
+        cMessage *ackFlag;
+        cMessage *probeRequest;
+        cMessage *requestInfo;
+        cMessage *scheduler;
+        cMessage *requestAck;
+
     protected:
         virtual void initialize();
         virtual void handleMessage(cMessage *msg) override;

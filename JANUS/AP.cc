@@ -58,5 +58,9 @@ void AP::handleMessage(cMessage *msg)
     }
 }
 
+void AP::schedule(cMessage *msg)
+{
+//performs scheduling function. takes info from RRI to create schedule
 
 
+}

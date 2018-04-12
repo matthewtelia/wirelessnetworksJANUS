@@ -15,6 +15,9 @@
 
 simple SensorNode
 {
+        parameters:
+            double distance;
+            
 	gates:
 	    input in;
 	    output out;

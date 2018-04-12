@@ -19,12 +19,15 @@ private:
 
     cMessage *registerNode;
     cMessage *requestFlag;
+    cMessage *replyRequestInfo;
     cMessage *dataPacket;
     cMessage *ackFlag;
 
 protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg) override;
+    virtual void determineInterference();
+    virtual void determinePacketLength();
     virtual void finish();
 };
 

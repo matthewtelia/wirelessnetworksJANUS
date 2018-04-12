@@ -20,10 +20,12 @@ private:
     cMessage *requestInfo;
     cMessage *scheduler;
     cMessage *requestAck;
+    
 
 protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg) override;
+    virtual void schedule(cMessage *msg);
     virtual void finish();
 };
 
