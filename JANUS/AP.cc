@@ -61,6 +61,13 @@ void AP::handleMessage(cMessage *msg)
 void AP::schedule(cMessage *msg)
 {
 //performs scheduling function. takes info from RRI to create schedule
+    cModule* c = getModuleByPath("BaseNetwork");
+
+    double interference;
+    double packetLength;
+    
+    interference = //get interefernce data from RRI msg
+    packetLength = //get packet length data from RRI msg
 
 
 }
