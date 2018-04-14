@@ -14,6 +14,8 @@ using namespace omnetpp;
 
 class SensorNode : public cSimpleModule
 {
+public:
+    double distance;
 private:
     enum{REGISTER_NODE,REQUEST_FLAGS,RRI,DATA_PACKET,ACK_FLAG};
 

@@ -26,19 +26,19 @@ void SensorNode::handleMessage(cMessage *msg)
 
     switch(msg -> getKind())
     {
-        case REGISTER_NODE:
+        case PROBE_REQUEST:
         {
             cMessage *registerNode = new cMessage("registerNode");
             send(registerNode, "out");
         }
 
-        case REQUEST_FLAGS:
+        case REQUEST_INFO:
         {
             cMessage *requestFlags = new cMessage("requestFlags");
             send(requestFlags, "out");
         }
         
-        case RRI:
+        case SCHEDULER:
         {
             cMessage *replyRequestInfo = new cMessage("replyRequestInfo");
             
@@ -46,17 +46,12 @@ void SensorNode::handleMessage(cMessage *msg)
             replyRequestInfor -> addObject(packetLength);
             send(replyRequestInfo, "out");
         }
-        case DATA_PACKET:
+        case REQUEST_ACK:
         {
             cMessage *dataPacket = new cMessage("dataPacket");
             send(dataPacket, "out");
         }
 
-        case ACK_FLAG:
-        {
-            cMessage *ackFlag = new cMessage("ackFlag");
-            send(ackFlag, "out");
-        }
 
         default:
         {

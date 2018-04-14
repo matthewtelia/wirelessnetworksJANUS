@@ -26,28 +26,42 @@ void AP::handleMessage(cMessage *msg)
 
     switch(msg -> getKind())
     {
-        case PROBE_REQUEST:
+        case REGISTER_NODE:
         {
-            cMessage *txProbe = new cMessage("txProbe");
-            send(txProbe, "out");
+            //sends probe request showing which request flag slots are used
+            //cMessage *probeRequest = new cMessage("probeRequest", PROBE_REQUEST);
+            //registration();
+            probeRequest -> addObject(slotOrder);
+            send(probeRequest, "out");
         }
 
-        case REQUEST_INFO:
+        case REQUEST_FLAG:
         {
-            cMessage *txRequestInfo = new cMessage("txRequestInfo");
+            //recieves flag from sensors that want to transmit data
+            transmitPoll(); 
+            //cMessage *requestInfo = new cMessage("requestInfo", REQUEST_INFO);
+            requestInfo -> addObject(TransmitOrder);
             send(txRequestInfo, "out");
         }
 
-        case SCHEDULER:
+        case RRI:
         {
-            cMessage *scheduler = new cMessage("scheduler");
+            //recieves intereference and packet length data from sensor node
+            schedule(msg);
+            //cMessage *scheduler = new cMessage("scheduler");
+            scheduler -> addObject(schedule);
             send(scheduler, "out");
         }
 
-        case REQUEST_ACK:
+        case DATA_PACKET:
         {
-            cMessage *requestAck = new cMessage("requestAck");
-            send(requestAck, "out");
+            //recieves data packet, records information
+        }
+        
+        case ACK_FLAG:
+        {
+            //
+        
         }
 
         default:
@@ -58,9 +72,32 @@ void AP::handleMessage(cMessage *msg)
     }
 }
 
+void AP::registration()
+{
+    //modifies slotOrder array to determine which slots are taken by which nodes
+    cModule* c = getModuleByPath("BaseNetwork");
+
+
+}
+
+void AP::transmitPoll()
+{
+    //modifies transmitOrder array to determine which nodes are tramsitting when
+    cModule* c = getModuleByPath("BaseNetwork");
+}
+
+void AP::schedulePackets()
+{
+    //sends out data packets and ACK requests
+    send(dataPackets, "out", simTime() + time0);
+    send(requestAck, "out", simTime() + time1);
+
+}
+
 void AP::schedule(cMessage *msg)
 {
-//performs scheduling function. takes info from RRI to create schedule
+    //performs scheduling function. takes info from RRI to create schedule
+    //schedule determines how long each node has to transmit
     cModule* c = getModuleByPath("BaseNetwork");
 
     double interference;
@@ -68,6 +105,7 @@ void AP::schedule(cMessage *msg)
     
     interference = //get interefernce data from RRI msg
     packetLength = //get packet length data from RRI msg
-
+    
+    schedulePackets();
 
 }
