@@ -25,11 +25,24 @@ private:
     cMessage *dataPacket;
     cMessage *ackFlag;
 
+    bool willSend;
+    int prob;
+    int slotTime;
+    int packetLength;
+    int interference []; 
+    bool willSendAck;
+       
+
 protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg) override;
     virtual void determineInterference();
     virtual void determinePacketLength();
+    virtual bool randomDataTransmit();
+    virtual void getTransmitTime(int schedule[]);
+    virtual void determineInterference();
+    virtual void determinePacketLength();
+    virtual void getAck(int requestAckNodes[]);
     virtual void finish();
 };
 

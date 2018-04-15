@@ -9,6 +9,8 @@
 void SensorNode::initialize()
 {
     cModule* c = getModuleByPath("BaseNetwork");
+    
+    prob = par("prob");		//probability that sensor will transmit data    
 
     //Message Types
     registerNode = new cMessage("registerNode", REGISTER_NODE);
@@ -23,33 +25,51 @@ void SensorNode::handleMessage(cMessage *msg)
 {
     cModule* c = getModuleByPath("BaseNetwork");
     EV << "Message:" << msg -> getKind() << endl;
+    //msgInfo = msg -> getObject();
 
     switch(msg -> getKind())
     {
         case PROBE_REQUEST:
         {
-            cMessage *registerNode = new cMessage("registerNode");
-            send(registerNode, "out");
+            //Probe request asks sensor if wants to send information. sensor either replies with request flag or stays silent
+            willSend = randomDataTransmit();
+            //nodeID = //create nodeID object
+            //cMessage *requestFlag = new cMessage("requestFlag", REQUEST_FLAG);
+            //requestFlag -> addObject(nodeID);
+            send(requestFlag, "out");
         }
 
         case REQUEST_INFO:
-        {
-            cMessage *requestFlags = new cMessage("requestFlags");
-            send(requestFlags, "out");
+        { 
+            packetLength = randomPacketLength();	//creates packetLength object
+            interferenceInfo = getInterference();	//creates interferenceInfo oject 
+            cMessage *replyRequestInfo = new cMessage("replyRequestInfo", RRI);
+            //replyRequestInfo -> addObject(packetLength);
+            //replyRequestInfo -> addObject(interferenceInfo);
+            send(replyRequestInfo, "out");
         }
         
         case SCHEDULER:
         {
-            cMessage *replyRequestInfo = new cMessage("replyRequestInfo");
             
-            replyRequestInfo -> addObject(interferenceInfo);
-            replyRequestInfor -> addObject(packetLength);
-            send(replyRequestInfo, "out");
+            getTransmitTime(msgInfo);
+            cMessage *dataPacket = new cMessage("dataPacket", DATA_PACKET);
+            sendDelayed(dataPacket, simTime() + slotTime, "out");
+
         }
         case REQUEST_ACK:
         {
-            cMessage *dataPacket = new cMessage("dataPacket");
-            send(dataPacket, "out");
+            getAck(msgInfo);
+            if (willSendAck == true)
+                {
+                    cMessage *ackFlag = new cMessage("ackFlag", ACK_FLAG);
+                    //ackFlag -> addObject(nodeID);
+                    send(ackFlag, "out");
+                }
+            else
+                {
+                    break;
+                }
         }
 
 
@@ -58,6 +78,46 @@ void SensorNode::handleMessage(cMessage *msg)
             break;
         }
     }
+}
+
+bool SensorNode::randomDataTransmit()
+{
+    //randomly determines whether or not sensor will transmit data with probability prob
+    
+    
+
+}
+
+bool SensorNode::getAck(int requestAckNodes)
+{
+    //determines if node will send ack flag based on request ack info
+    
+    length = sizeof(requestAckNodes)/sizeof(*requestAckNodes);
+    for (int i = 0; 0<i<length; i++)
+        {
+            if (requestAckNodes[i] == nodeID)
+                {
+                    willSendAck = true;
+                    break;
+                }
+        }
+
+    willSendAck = false;
+ 
+}
+
+void SensorNode::getTransmitTime(int schedule)
+{
+    //reads schedule array from shceduler packets and determines what time node transmits
+    
+    slotTime = 0;
+
+}
+
+int SensorNode::randomPacketLength()
+{
+    //randomly assigns packet length
+
 }
 
 void SensorNode::determineInterference()

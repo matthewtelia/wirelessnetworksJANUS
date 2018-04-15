@@ -31,7 +31,7 @@ void AP::handleMessage(cMessage *msg)
             //sends probe request showing which request flag slots are used
             //cMessage *probeRequest = new cMessage("probeRequest", PROBE_REQUEST);
             //registration();
-            probeRequest -> addObject(slotOrder);
+            //probeRequest -> addObject(slotOrder);
             send(probeRequest, "out");
         }
 
@@ -40,7 +40,7 @@ void AP::handleMessage(cMessage *msg)
             //recieves flag from sensors that want to transmit data
             transmitPoll(); 
             //cMessage *requestInfo = new cMessage("requestInfo", REQUEST_INFO);
-            requestInfo -> addObject(TransmitOrder);
+            //requestInfo -> addObject(TransmitOrder);
             send(txRequestInfo, "out");
         }
 
@@ -49,7 +49,7 @@ void AP::handleMessage(cMessage *msg)
             //recieves intereference and packet length data from sensor node
             schedule(msg);
             //cMessage *scheduler = new cMessage("scheduler");
-            scheduler -> addObject(schedule);
+            //scheduler -> addObject(schedule);
             send(scheduler, "out");
         }
 
@@ -60,7 +60,7 @@ void AP::handleMessage(cMessage *msg)
         
         case ACK_FLAG:
         {
-            //
+            //recieves Ack flag, records information
         
         }
 
