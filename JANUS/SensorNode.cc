@@ -83,8 +83,10 @@ void SensorNode::handleMessage(cMessage *msg)
 bool SensorNode::randomDataTransmit()
 {
     //randomly determines whether or not sensor will transmit data with probability prob
+    std::knuth_b rand_engine;
+    std::bernoulli_distribution random_bool_generator(0.5);
     
-    
+    return random_bool_generator(rand_engine);
 
 }
 
@@ -117,12 +119,16 @@ void SensorNode::getTransmitTime(int schedule)
 int SensorNode::randomPacketLength()
 {
     //randomly assigns packet length
+    return (rand()%10)+1;
 
 }
 
 void SensorNode::determineInterference()
 {
-
+    //determine the signal to noise ratio of the node
+    distance = sqrt((xAP - xNode)^2 + (yAP - yNode)^2); // determining distance between nodes and AP
+    Psignal = distance * orignalSignal; //multiplying original signal
+    SNR = Psignal/Pnoise;
 }
 
 void SensorNode::determinePacketLength()

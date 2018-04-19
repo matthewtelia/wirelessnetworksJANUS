@@ -9,6 +9,8 @@
 #define SENSORNODE_H_
 
 #include <omnetpp.h>
+#include <random>
+#include <cstdlib>
 
 using namespace omnetpp;
 
@@ -16,6 +18,14 @@ class SensorNode : public cSimpleModule
 {
 public:
     double distance;
+    double SNR;
+    double Pnoise;
+    double Psignal;
+    double xNode;
+    double yNode;
+    double xAP;
+    double yAP;
+
 private:
     enum{REGISTER_NODE,REQUEST_FLAGS,RRI,DATA_PACKET,ACK_FLAG};
 
@@ -40,7 +50,7 @@ protected:
     virtual void determinePacketLength();
     virtual bool randomDataTransmit();
     virtual void getTransmitTime(int schedule[]);
-    virtual void determineInterference();
+    virtual void determineInterference(double distance,double xNode, double yNode);
     virtual void determinePacketLength();
     virtual void getAck(int requestAckNodes[]);
     virtual void finish();
