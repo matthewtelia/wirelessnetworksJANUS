@@ -15,7 +15,11 @@
 
 simple AP
 {
-	gates:
+	parameters:
+            double Tshare1;
+            double Tshare2;
+            int numNodes;
+        gates:
 	    input in;
 	    output out;
 }

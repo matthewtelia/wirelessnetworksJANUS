@@ -44,6 +44,7 @@ void SensorNode::handleMessage(cMessage *msg)
             packetLength = randomPacketLength();	//creates packetLength object
             interferenceInfo = getInterference();	//creates interferenceInfo oject 
             cMessage *replyRequestInfo = new cMessage("replyRequestInfo", RRI);
+            //replyRequestInfo -> addObject(nodeID);
             //replyRequestInfo -> addObject(packetLength);
             //replyRequestInfo -> addObject(interferenceInfo);
             send(replyRequestInfo, "out");

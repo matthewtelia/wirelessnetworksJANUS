@@ -41,7 +41,7 @@ private:
     int packetLength;
     int interference []; 
     bool willSendAck;
-       
+    double deficit;   
 
 protected:
     virtual void initialize();

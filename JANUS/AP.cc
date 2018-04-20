@@ -15,8 +15,15 @@ void AP::initialize()
     requestInfo = new cMessage("requestInfo",REQUEST_INFO);
     scheduler = new cMessage("scheduler",SCHEDULER);
     requestAck = new cMessage("requestAck",REQUEST_ACK);
-
-
+    
+    round = 0;
+    Tshare1 = par("Tshare1");
+    Tshare2 = par("Tshare2");
+    numNodes = par("numNodes");
+    //initilize conflict map matrix numNodes x numNodes
+    conflictMap[numNodes][numNodes];
+    //initialize rate matrix numNodes x numnodes
+    rateMatrix[numNodes][numNodes]; 
 }
 
 void AP::handleMessage(cMessage *msg)
@@ -47,9 +54,12 @@ void AP::handleMessage(cMessage *msg)
         case RRI:
         {
             //recieves intereference and packet length data from sensor node
+            //get NodeID object
+            //check if all NodeIDs accounted for, then schedule
             schedule(msg);
             //cMessage *scheduler = new cMessage("scheduler");
             //scheduler -> addObject(schedule);
+            
             send(scheduler, "out");
         }
 
@@ -106,6 +116,13 @@ void AP::schedule(cMessage *msg)
     interference = //get interefernce data from RRI msg
     packetLength = //get packet length data from RRI msg
     
+    //update conflict map
+  
+
+    //update rate matrix
+
+    
+    //Load Control Unit (LCU) uses Deficit Round Robin DRR    
     schedulePackets();
 
 }

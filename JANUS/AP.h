@@ -23,7 +23,12 @@ private:
     cMessage *requestInfo;
     cMessage *scheduler;
     cMessage *requestAck;
-    
+    double Tshare1;
+    double Tshare2;
+    int round; 
+    int numNodes;
+    double conflictMap[][];
+    double rateMatrix[][];
 
 protected:
     virtual void initialize();
