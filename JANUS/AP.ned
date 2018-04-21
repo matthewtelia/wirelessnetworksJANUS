@@ -15,11 +15,12 @@
 
 simple AP
 {
-	parameters:
-            double Tshare1;
-            double Tshare2;
-            int numNodes;
+	    parameters:
+            int numNodes = default(2);
+            double timeIncrement = default(0.1);
+            double signalStrength = default(1);
         gates:
-	    input in;
-	    output out;
+	        input in;
+	        output out1;
+	        output out2;
 }

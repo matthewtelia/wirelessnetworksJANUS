@@ -19,12 +19,17 @@ network Base_Network
 	    
 	submodules:
 	
-		SensorNode: SensorNode;
+		SensorNode1: SensorNode;
+		SensorNode2: SensorNode;
 		AP: AP;
 		//WirelessChannel: WirelessChannel;
 		
 	connections:
 	            
-	    AP.out --> SensorNode.in;
-	    SensorNode.out --> AP.in;
+	    AP.out1 --> SensorNode1.in;
+	    AP.out2 --> SensorNode2.in;
+	    SensorNode1.out1 --> AP.in;
+	    SensorNode1.out2 --> SensorNode2.in;
+	    SensorNode2.out1 --> AP.in;
+	    SensorNode2.out2 --> SensorNode1.in;
 }

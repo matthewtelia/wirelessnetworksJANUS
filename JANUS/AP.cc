@@ -11,19 +11,32 @@ void AP::initialize()
     cModule* c = getModuleByPath("BaseNetwork");
 
     //Message Types
+    initialProbeRequest = new cMessage("initializeProbeRequest", INIT);
     probeRequest = new cMessage("probeRequest", PROBE_REQUEST);
     requestInfo = new cMessage("requestInfo",REQUEST_INFO);
     scheduler = new cMessage("scheduler",SCHEDULER);
     requestAck = new cMessage("requestAck",REQUEST_ACK);
-    
+
     round = 0;
-    Tshare1 = par("Tshare1");
-    Tshare2 = par("Tshare2");
+
+    Tshare[0] = .003;
+    Tshare[1] = 0.006;
+    Tshare[2] = 0.006;
+
+    slotOrder[1] = 1;
+    slotOrder[2] = 2;
+    timeIncrement = par("timeIncrement");
+    signalStrength = par("signalStrength");
+
     numNodes = par("numNodes");
     //initilize conflict map matrix numNodes x numNodes
-    conflictMap[numNodes][numNodes];
+    conflictMap[numNodes][numNodes] = {0};
     //initialize rate matrix numNodes x numnodes
     rateMatrix[numNodes][numNodes]; 
+
+
+    scheduleAt(simTime(), initialProbeRequest);
+
 }
 
 void AP::handleMessage(cMessage *msg)
@@ -34,22 +47,33 @@ void AP::handleMessage(cMessage *msg)
     cMessage *ptr = check_and_cast<cMessage *>(msg);
     switch(msg -> getKind())
     {
-        case REGISTER_NODE:
+        case INIT:
         {
+
             //sends probe request showing which request flag slots are used
             //cMessage *probeRequest = new cMessage("probeRequest", PROBE_REQUEST);
             //registration();
-            //probeRequest -> addObject(slotOrder);
+
+            probeRequest -> addPar("slotOrder");
+            probeRequest -> addPar("Tshare");
+            probeRequest -> par("slotOrder") = slotOrder;
+            probeRequest -> par("Tshare") = Tshare[round];
             send(probeRequest, "out");
+            round = round + 1;
         }
 
         case REQUEST_FLAG:
         {
             //recieves flag from sensors that want to transmit data
-            transmitPoll(); 
-            cMessage *txRequestInfo = new cMessage("txRequestInfo", REQUEST_INFO);
-            //requestInfo -> addObject(TransmitOrder);
-            send(txRequestInfo, "out");
+            bool willSend = msg -> par("willSend");
+            int nodeID = msg -> par("nodeID");
+            transmitPoll(willSend, nodeID);
+            //cMessage *txRequestInfo = new cMessage("txRequestInfo", REQUEST_INFO);
+            requestInfo -> par("transmitOrder") = transmitOrder;
+            requestInfo -> par("signalStrength") = signalStrength;
+            double timeToSend = numNodes * timeIncrement;
+            sendDelayed(requestInfo,simTime() + timeToSend, "out1");
+            sendDelayed(requestInfo,simTime() + timeToSend, "out2");
         }
 
         case RRI:
@@ -57,11 +81,35 @@ void AP::handleMessage(cMessage *msg)
             //recieves intereference and packet length data from sensor node
             //get NodeID object
             //check if all NodeIDs accounted for, then schedule
+            int nodeID = msg -> par("nodeID");
+            double signalStrength = msg -> par("signalStrength");
+            int packetLength = msg -> par("packetLength");
+            int intereference = msg -> par("interference");
+
+            double SIR[5] = {0};
+            for (int i=0; i<6; i++)
+            {
+                SIR[i] = signalStrength/interference[i];
+            }
+
+            conflictMap[nodeID] = SIR;
+
             schedule(msg);
             //cMessage *scheduler = new cMessage("scheduler");
-            //scheduler -> addObject(schedule);
+            scheduler -> addPar("schedule");
+            scheduler -> par("schedule") = scheduleSendTimes;
+
+            double timeToSend = numNodes * timeIncrement;
+            sendDelayed(scheduler, simTime() + timeToSend, "out1");
+            sendDelayed(scheduler, simTime() + timeToSend, "out2");
+            scheduleAt(simTime() + timeToSend, scheduler);
+        }
+
+        case SCHEDULER:
+        {
+            //recieves scheduler packet with data transmit schedule
+
             
-            send(scheduler, "out");
         }
 
         case DATA_PACKET:
@@ -91,10 +139,14 @@ void AP::registration()
 
 }
 
-void AP::transmitPoll()
+void AP::transmitPoll(bool willSend, int nodeID)
 {
     //modifies transmitOrder array to determine which nodes are tramsitting when
     cModule* c = getModuleByPath("BaseNetwork");
+    //0 = node won't transmit, 1 = node will transmit
+    transmitOrder[nodeID] = willSend;
+
+
 }
 
 void AP::schedulePackets()

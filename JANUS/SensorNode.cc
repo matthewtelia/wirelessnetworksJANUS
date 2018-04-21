@@ -10,7 +10,13 @@ void SensorNode::initialize()
 {
     cModule* c = getModuleByPath("BaseNetwork");
     
-    prob = par("prob");		//probability that sensor will transmit data    
+    prob = par("prob");		//probability that sensor will transmit data
+    distance = par("distance");
+    nodeID = par("nodeID");
+    timeIncrement = par("timeIncrement");
+    signalStrength = par("signalStrength");
+    slot = 0;
+
 
     //Message Types
     registerNode = new cMessage("registerNode", REGISTER_NODE);
@@ -25,31 +31,52 @@ void SensorNode::handleMessage(cMessage *msg)
 {
     cModule* c = getModuleByPath("BaseNetwork");
     EV << "Message:" << msg -> getKind() << endl;
-    msgInfo = msg -> getObject();
+
 
     switch(msg -> getKind())
     {
         case PROBE_REQUEST:
         {
+            int Tshare = msg -> par("Tshare");
+            int slotOrder[5] = {0};
+            slotOrder[5] = msg -> par("slotOrder");
+            slot = slotOrder[nodeID];
+            double timeToSend = slot * timeIncrement;
+
             //Probe request asks sensor if wants to send information. sensor either replies with request flag or stays silent
             willSend = randomDataTransmit();
             //nodeID = //create nodeID object
             //cMessage *requestFlag = new cMessage("requestFlag", REQUEST_FLAG);
-            //requestFlag -> addObject(nodeID);
-            send(requestFlag, "out");
+            requestFlag -> par("nodeID");
+            requestFlag -> par("willSend");
+            sendDelayed(requestFlag, simTime() + timeToSend, "out1");
         }
 
         case REQUEST_INFO:
         { 
+            int transmitOrder[5] = {0};
+            transmitOrder[5] = msg -> par("transmitOrder");
+            double APSignalStrength = msg -> par(signalStrength);
             packetLength = randomPacketLength();	//creates packetLength object
-            interferenceInfo = getInterference();	//creates interferenceInfo oject 
+            //interferenceInfo = getInterference();	//creates interferenceInfo oject
             cMessage *replyRequestInfo = new cMessage("replyRequestInfo", RRI);
-            //replyRequestInfo -> addObject(nodeID);
-            //replyRequestInfo -> addObject(packetLength);
-            //replyRequestInfo -> addObject(interferenceInfo);
-            send(replyRequestInfo, "out");
+            replyRequestInfo -> addPar("nodeID") = nodeID;
+            replyRequestInfo -> addPar("signalStrength") = signalStrength;
+            replyRequestInfo -> addPar("packetLength") = packetLength;
+            //replyRequestInfo -> addPar("interferenceInfo") = interferenceInfo;
+            replyRequestInfo -> addPar("intereferenceArray") = interferenceArray;
+            double timeToSend = timeIncrement * slot;
+            sendDelayed(replyRequestInfo, simTime() + timeToSend, "out1");
+            sendDelayed(replyRequestInfo, simTime() + timeToSend,"out2");
         }
         
+        case RRI:
+        {
+            int otherNodeID = msg -> par("nodeID");
+            double otherSensorSignalStrength = msg -> par("SignalStrength");
+            interferenceArray[otherNodeID] = otherSensorSignalStrength;
+        }
+
         case SCHEDULER:
         {
             
@@ -85,7 +112,7 @@ bool SensorNode::randomDataTransmit()
 {
     //randomly determines whether or not sensor will transmit data with probability prob
     std::knuth_b rand_engine;
-    std::bernoulli_distribution random_bool_generator(0.5);
+    std::bernoulli_distribution random_bool_generator(prob);
     
     return random_bool_generator(rand_engine);
 

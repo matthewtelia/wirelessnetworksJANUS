@@ -15,19 +15,21 @@ using namespace omnetpp;
 class AP : public cSimpleModule
 {
 public:
-    int slotOrder[];
-    int transmitOrder[];
+    int slotOrder[5]={0};
+    int transmitOrder[5];
 private:
-    enum{PROBE_REQUEST = 0
+    enum{INIT=0
+        ,PROBE_REQUEST = 1
         ,REQUEST_INFO = 1
         ,SCHEDULER = 2
         ,REQUEST_ACK = 3
         ,ACK_FLAG = 4
         ,DATA_PACKET = 5
-        ,REGISTER_NODE = 6
+        ,REGISTER_NODE = 0
         ,REQUEST_FLAG = 7
         ,RRI = 8};
 
+    cMessage *initialProbeRequest;
     cMessage *probeRequest;
     cMessage *requestInfo;
     cMessage *scheduler;
@@ -36,14 +38,17 @@ private:
     cMessage *dataPackets;
 
 
-    double Tshare1;
-    double Tshare2;
+    double Tshare[2];
     int round; 
+    int numberOfSlots=5;
     int numNodes;
     double time0;
     double time1;
     double conflictMap[][5];
     double rateMatrix[][5];
+    double timeIncrement;
+    double signalStrength;
+    double scheduleSendTimes[5] = {0};
 
 protected:
     virtual void initialize();
@@ -51,7 +56,7 @@ protected:
     virtual void schedule(cMessage *msg);
     virtual void registration();
     virtual void schedulePackets();
-    virtual void transmitPoll();
+    virtual void transmitPoll(bool willSend, int nodeID);
     virtual void finish();
 };
 

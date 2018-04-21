@@ -32,10 +32,11 @@ private:
         ,RRI = 2
         ,DATA_PACKET = 3
         ,ACK_FLAG = 4
-        ,PROBE_REQUEST = 5
+        ,PROBE_REQUEST = 1
         ,REQUEST_ACK = 6
         ,REQUEST_INFO = 7
         ,SCHEDULER = 8
+        ,RRI = 9
         };
 
     cMessage *registerNode;
@@ -47,7 +48,7 @@ private:
     cObject *msgInfo;
 
     bool willSend;
-    int prob;
+    double prob;
     int slotTime;
     int packetLength;
     int interferenceInfo;
@@ -57,6 +58,10 @@ private:
     int originalSignal;
     int length;
     int nodeID;
+    double timeIncrement;
+    double signalStrength;
+    double interferenceArray[5] = {1};
+    int slot;
 
 protected:
     virtual void initialize();
