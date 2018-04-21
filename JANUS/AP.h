@@ -18,17 +18,32 @@ public:
     int slotOrder[];
     int transmitOrder[];
 private:
-    enum{PROBE_REQUEST,REQUEST_INFO,SCHEDULER,REQUEST_ACK};
+    enum{PROBE_REQUEST = 0
+        ,REQUEST_INFO = 1
+        ,SCHEDULER = 2
+        ,REQUEST_ACK = 3
+        ,ACK_FLAG = 4
+        ,DATA_PACKET = 5
+        ,REGISTER_NODE = 6
+        ,REQUEST_FLAG = 7
+        ,RRI = 8};
+
     cMessage *probeRequest;
     cMessage *requestInfo;
     cMessage *scheduler;
     cMessage *requestAck;
+    cMessage *ackFlag;
+    cMessage *dataPackets;
+
+
     double Tshare1;
     double Tshare2;
     int round; 
     int numNodes;
-    double conflictMap[][];
-    double rateMatrix[][];
+    double time0;
+    double time1;
+    double conflictMap[][5];
+    double rateMatrix[][5];
 
 protected:
     virtual void initialize();
@@ -36,6 +51,7 @@ protected:
     virtual void schedule(cMessage *msg);
     virtual void registration();
     virtual void schedulePackets();
+    virtual void transmitPoll();
     virtual void finish();
 };
 

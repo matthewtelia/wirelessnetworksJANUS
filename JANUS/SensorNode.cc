@@ -25,7 +25,7 @@ void SensorNode::handleMessage(cMessage *msg)
 {
     cModule* c = getModuleByPath("BaseNetwork");
     EV << "Message:" << msg -> getKind() << endl;
-    //msgInfo = msg -> getObject();
+    msgInfo = msg -> getObject();
 
     switch(msg -> getKind())
     {
@@ -91,7 +91,7 @@ bool SensorNode::randomDataTransmit()
 
 }
 
-bool SensorNode::getAck(int requestAckNodes)
+bool SensorNode::getAck(int *requestAckNodes)
 {
     //determines if node will send ack flag based on request ack info
     
@@ -109,7 +109,7 @@ bool SensorNode::getAck(int requestAckNodes)
  
 }
 
-void SensorNode::getTransmitTime(int schedule)
+void SensorNode::getTransmitTime(int *schedule)
 {
     //reads schedule array from shceduler packets and determines what time node transmits
     
@@ -127,13 +127,19 @@ int SensorNode::randomPacketLength()
 void SensorNode::determineInterference()
 {
     //determine the signal to noise ratio of the node
-    distance = sqrt((xAP - xNode)^2 + (yAP - yNode)^2); // determining distance between nodes and AP
-    Psignal = distance * orignalSignal; //multiplying original signal
+    distance = pow(sqrt(xAP - xNode),2) + pow((yAP - yNode),2); // determining distance between nodes and AP
+    Psignal = distance * originalSignal; //multiplying original signal
     SNR = Psignal/Pnoise;
 }
 
-void SensorNode::determinePacketLength()
-{
+//void SensorNode::determinePacketLength()
+//{
+//
+//}
 
+int SensorNode::getInterference()
+{
+    return 0;
 }
+
 

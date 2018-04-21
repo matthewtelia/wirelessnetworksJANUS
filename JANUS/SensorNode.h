@@ -11,7 +11,7 @@
 #include <omnetpp.h>
 #include <random>
 #include <cstdlib>
-
+#include <cmath>
 using namespace omnetpp;
 
 class SensorNode : public cSimpleModule
@@ -27,7 +27,16 @@ public:
     double yAP;
 
 private:
-    enum{REGISTER_NODE,REQUEST_FLAGS,RRI,DATA_PACKET,ACK_FLAG};
+    enum{REGISTER_NODE = 0
+        ,REQUEST_FLAGS = 1
+        ,RRI = 2
+        ,DATA_PACKET = 3
+        ,ACK_FLAG = 4
+        ,PROBE_REQUEST = 5
+        ,REQUEST_ACK = 6
+        ,REQUEST_INFO = 7
+        ,SCHEDULER = 8
+        };
 
     cMessage *registerNode;
     cMessage *requestFlag;
@@ -35,13 +44,19 @@ private:
     cMessage *dataPacket;
     cMessage *ackFlag;
 
+    cObject *msgInfo;
+
     bool willSend;
     int prob;
     int slotTime;
     int packetLength;
+    int interferenceInfo;
     int interference []; 
     bool willSendAck;
-    double deficit;   
+    double deficit;
+    int originalSignal;
+    int length;
+    int nodeID;
 
 protected:
     virtual void initialize();
@@ -49,10 +64,12 @@ protected:
     virtual void determineInterference();
     virtual void determinePacketLength();
     virtual bool randomDataTransmit();
-    virtual void getTransmitTime(int schedule[]);
+    virtual void getTransmitTime(int *schedule);
+    virtual int getInterference();
     virtual void determineInterference(double distance,double xNode, double yNode);
-    virtual void determinePacketLength();
-    virtual void getAck(int requestAckNodes[]);
+   // void determinePacketLength();
+    virtual int randomPacketLength();
+    virtual bool getAck(int *requestAckNodes);
     virtual void finish();
 };
 

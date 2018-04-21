@@ -31,6 +31,7 @@ void AP::handleMessage(cMessage *msg)
     cModule* c = getModuleByPath("BaseNetwork");
     EV << "Message Kind: " << msg -> getKind() << endl;
 
+    cMessage *ptr = check_and_cast<cMessage *>(msg);
     switch(msg -> getKind())
     {
         case REGISTER_NODE:
@@ -46,7 +47,7 @@ void AP::handleMessage(cMessage *msg)
         {
             //recieves flag from sensors that want to transmit data
             transmitPoll(); 
-            //cMessage *requestInfo = new cMessage("requestInfo", REQUEST_INFO);
+            cMessage *txRequestInfo = new cMessage("txRequestInfo", REQUEST_INFO);
             //requestInfo -> addObject(TransmitOrder);
             send(txRequestInfo, "out");
         }
@@ -99,8 +100,8 @@ void AP::transmitPoll()
 void AP::schedulePackets()
 {
     //sends out data packets and ACK requests
-    send(dataPackets, "out", simTime() + time0);
-    send(requestAck, "out", simTime() + time1);
+    sendDelayed(dataPackets,simTime() + time0,"out");
+    sendDelayed(requestAck, simTime() + time1,"out");
 
 }
 
@@ -113,8 +114,8 @@ void AP::schedule(cMessage *msg)
     double interference;
     double packetLength;
     
-    interference = //get interefernce data from RRI msg
-    packetLength = //get packet length data from RRI msg
+    interference =  0;//get interefernce data from RRI msg
+    packetLength =  0;//get packet length data from RRI msg
     
     //update conflict map
   
