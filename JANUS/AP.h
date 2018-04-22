@@ -62,6 +62,7 @@ private:
     int numPacketsArray[2] = {0};
     int sendOrder[2] = {0};
     int schedulerArray[2] = {0};
+    //int sendOrder[2] = {0};
 
 protected:
     virtual void initialize();
@@ -74,7 +75,7 @@ protected:
     virtual int generateDataPacket();
     virtual int randomPacketLength();
     virtual int measureQueue(int packetLengths[]);
-    virtual int RTA(double interference[], int nodeID, int numNodes);
+    virtual void RTA(double interference[], int nodeID, int numNodes);
     virtual int LCU(int packetLengths[], int nodeID);
     virtual void finish();
 };

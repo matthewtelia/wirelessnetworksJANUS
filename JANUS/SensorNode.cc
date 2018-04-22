@@ -21,6 +21,7 @@ void SensorNode::initialize()
     prevI = 1;
 
 
+
     //Message Types
     registerNode = new cMessage("registerNode", REGISTER_NODE);
     requestFlag = new cMessage("requestFlag", REQUEST_FLAGS);
@@ -64,7 +65,13 @@ void SensorNode::handleMessage(cMessage *msg)
             //packetLength = randomPacketLength();	//creates packetLength object
             //interferenceInfo = getInterference();	//creates interferenceInfo oject
 
-            packetLengths[5] = generateDataPacket();
+
+
+            for(int i=0; i<5; i++)
+            {
+                packetLengths[i] = generateDataPacket();
+            }
+
             Tqueue = measureQueue(packetLengths);
             Tdeficit = updatedeficit(Tdeficit,Tshare,Tqueue);
 
@@ -88,8 +95,12 @@ void SensorNode::handleMessage(cMessage *msg)
 
         case SCHEDULER:
         {
-            
             //getTransmitTime(msgInfo);
+            int schedule[numNodes] = {0};
+            schedule = msg -> par("scheduler");
+            
+            slotTime = schedule[nodeID];
+
             cMessage *dataPacket = new cMessage("dataPacket", DATA_PACKET);
             sendDelayed(dataPacket, simTime() + slotTime, "out");
 
@@ -131,7 +142,7 @@ bool SensorNode::getAck(int *requestAckNodes)
 {
     //determines if node will send ack flag based on request ack info
     
-    length = sizeof(requestAckNodes)/sizeof(*requestAckNodes);
+    int length = sizeof(requestAckNodes)/sizeof(*requestAckNodes);
     for (int i = 0; 0<i<length; i++)
         {
             if (requestAckNodes[i] == nodeID)
@@ -145,13 +156,13 @@ bool SensorNode::getAck(int *requestAckNodes)
  
 }
 
-void SensorNode::getTransmitTime(int *schedule)
-{
+//void SensorNode::getTransmitTime(int *schedule)
+//{
     //reads schedule array from shceduler packets and determines what time node transmits
     //(rand()%10)+1;
-    slotTime = 0;
+//    slotTime = 0;
 
-}
+//}
 
 int SensorNode::randomPacketLength()
 {
@@ -199,6 +210,8 @@ int SensorNode::generateDataPacket()
 {
 
     int numPackets = (rand()%5)+1;
+    return numPackets;
+    /*
     packetLengths[numPackets] = {0};
     for (int i = 0; i <= numPackets; i++)
     {
@@ -206,6 +219,7 @@ int SensorNode::generateDataPacket()
     }
 
     return packetLengths[5];
+    */
 }
 
 int SensorNode::measureQueue(int packetLengths[])

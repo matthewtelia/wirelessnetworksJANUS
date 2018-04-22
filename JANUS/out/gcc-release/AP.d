@@ -1,6 +1,6 @@
 out/gcc-release//AP.o: AP.cc AP.h \
- /home/matt/omnetpp-5.2.1/include/omnetpp.h
+ /home/ilana/Documents/Spring_2018/Wireless_Sensor_Networks/omnetpp-5.2.1/include/omnetpp.h
 
 AP.h:
 
-/home/matt/omnetpp-5.2.1/include/omnetpp.h:
+/home/ilana/Documents/Spring_2018/Wireless_Sensor_Networks/omnetpp-5.2.1/include/omnetpp.h:

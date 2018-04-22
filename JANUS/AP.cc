@@ -76,7 +76,11 @@ void AP::handleMessage(cMessage *msg)
             requestInfo -> par("transmitOrder") = transmitOrder;
             requestInfo -> par("signalStrength") = signalStrength;
             double timeToSend = numNodes * timeIncrement;
-            packetLengths[5] = generateDataPacket();
+            for(int i=0; i<5; i++)
+            {
+                packetLengths[i] = generateDataPacket();
+            }
+            //packetLengths[5] = generateDataPacket();
             Tqueue = measureQueue(packetLengths);
             Tdeficit = updatedeficit(Tdeficit,Tshare,Tqueue);
             sendDelayed(requestInfo,simTime() + timeToSend, "out1");
@@ -217,18 +221,12 @@ int AP::LCU(int packetLengths[], int nodeID)
 
 }
 
-int AP::RTA(double interference[], int nodeID, int numNodes)
+void AP::RTA(double interference[], int nodeID, int numNodes)
 {
-
-    int sendOrder[numNodes] = {0};
-
     for(int i = 0; i <= numNodes; i++)
     {
         sendOrder[i] = i;int schedule[numNodes] = {0};
     }
-
-  return sendOrder;
-
 }
 
 void AP::schedule(int packetLengths[], double interference[], int nodeID)
@@ -240,7 +238,7 @@ void AP::schedule(int packetLengths[], double interference[], int nodeID)
     
     numPacketsArray[nodeID] = LCU(packetLengths,nodeID);
     //int numPacketsToSend = LCU(packetLengths, nodeID);
-    sendOrder = RTA(interference, nodeID, numNodes);
+    RTA(interference, nodeID, numNodes);
 
 
     schedulerArray[nodeID] = numPacketsArray[nodeID] * packetLengths[nodeID] * 0.001;
@@ -299,11 +297,14 @@ int AP::generateDataPacket()
 {
 
     int numPackets = (rand()%5)+1;
+    return numPackets;
+    /*
     packetLengths[numPackets] = {0};
     for (int i = 0; i <= numPackets; i++)
     {
         packetLengths[i] = randomPacketLength();
     }
 
-    return packetLengths[5];
+    return packetLengths;
+    */
 }

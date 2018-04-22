@@ -46,17 +46,18 @@ private:
 
     cObject *msgInfo;
 
-    bool willSend;
-    double prob;
-    int slotTime;
-    int packetLengths[];
-    int interferenceInfo;
-    int interference []; 
+    bool willSend;  //determines if node will send data that round
+    double prob;    //probability node will send data
+    int slotTime;   //time data is transmitted after schedule packet recieved
+    int packetLengths[];    //number of packets to send
+    //int interferenceInfo;
+    //int interference [];
     bool willSendAck;
-    double deficit;
+    //double deficit;
     int originalSignal;
-    int length;
+    //int length;
     int nodeID;
+    int numNodes = 2;
     double timeIncrement;
     double signalStrength;
     double interferenceArray[5] = {1};
