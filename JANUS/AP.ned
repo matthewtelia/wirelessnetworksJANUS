@@ -17,6 +17,7 @@ simple AP
 {
 	    parameters:
             int numNodes = default(2);
+            int nodeID = default(0);
             double timeIncrement = default(0.1);
             double signalStrength = default(1);
         gates:

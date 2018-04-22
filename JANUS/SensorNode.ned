@@ -23,7 +23,8 @@ simple SensorNode
             double signalStrength = default(.005);
 	gates:
 	    input in;
-	    output out[];
+	    output out1;
+	    output out2;
 	    
 	    
 }

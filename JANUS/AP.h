@@ -44,6 +44,7 @@ private:
     int round; 
     int numberOfSlots=5;
     int numNodes;
+    int nodeID;
     double time0;
     double time1;
     double conflictMap[][5];
@@ -58,6 +59,9 @@ private:
     double interference[5] = {0};
     int prevI;
     double prevTdeficit;
+    int numPacketsArray[2] = {0};
+    int sendOrder[2] = {0};
+    int schedulerArray[2] = {0};
 
 protected:
     virtual void initialize();
@@ -70,7 +74,7 @@ protected:
     virtual int generateDataPacket();
     virtual int randomPacketLength();
     virtual int measureQueue(int packetLengths[]);
-    virtual void RTA(double interference[], int nodeID);
+    virtual int RTA(double interference[], int nodeID, int numNodes);
     virtual int LCU(int packetLengths[], int nodeID);
     virtual void finish();
 };

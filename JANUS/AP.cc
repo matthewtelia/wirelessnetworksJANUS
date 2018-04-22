@@ -31,6 +31,7 @@ void AP::initialize()
     signalStrength = par("signalStrength");
 
     numNodes = par("numNodes");
+    nodeID = par("nodeID");
     //initilize conflict map matrix numNodes x numNodes
 
     conflictMap[numNodes][numNodes] = {0};
@@ -117,7 +118,14 @@ void AP::handleMessage(cMessage *msg)
         case SCHEDULER:
         {
             //recieves scheduler packet with data transmit schedule
+            int schedule[numNodes] = {0};
+            schedule[numNodes] = msg -> par("schedule");
 
+            int sendTime = schedule[nodeID];
+
+            cMessage *dataPacket = new cMessage("dataPacket", DATA_PACKET);
+            sendDelayed(dataPacket,simTime() + sendTime,"out1");
+            sendDelayed(dataPacket,simTime() + sendTime,"out2");
             
         }
 
@@ -158,13 +166,13 @@ void AP::transmitPoll(bool willSend, int nodeID)
 
 }
 
-void AP::schedulePackets()
+/*void AP::schedulePackets()
 {
     //sends out data packets and ACK requests
     sendDelayed(dataPackets,simTime() + time0,"out");
     sendDelayed(requestAck, simTime() + time1,"out");
 
-}
+}*/
 int AP::LCU(int packetLengths[], int nodeID)
 {
     for (int i=0; i<6; i++)
@@ -209,9 +217,17 @@ int AP::LCU(int packetLengths[], int nodeID)
 
 }
 
-void AP::RTA(double interference[], int nodeID)
+int AP::RTA(double interference[], int nodeID, int numNodes)
 {
 
+    int sendOrder[numNodes] = {0};
+
+    for(int i = 0; i <= numNodes; i++)
+    {
+        sendOrder[i] = i;int schedule[numNodes] = {0};
+    }
+
+  return sendOrder;
 
 }
 
@@ -222,8 +238,12 @@ void AP::schedule(int packetLengths[], double interference[], int nodeID)
     cModule* c = getModuleByPath("BaseNetwork");
 
     
-    int numPacketsToSend = LCU(packetLengths, nodeID);
-    RTA(interference, nodeID);
+    numPacketsArray[nodeID] = LCU(packetLengths,nodeID);
+    //int numPacketsToSend = LCU(packetLengths, nodeID);
+    sendOrder = RTA(interference, nodeID, numNodes);
+
+
+    schedulerArray[nodeID] = numPacketsArray[nodeID] * packetLengths[nodeID] * 0.001;
 
     
     //update conflict map
@@ -233,7 +253,7 @@ void AP::schedule(int packetLengths[], double interference[], int nodeID)
 
     
     //Load Control Unit (LCU) uses Deficit Round Robin DRR    
-    schedulePackets();
+    //schedulePackets();
 
 }
 
