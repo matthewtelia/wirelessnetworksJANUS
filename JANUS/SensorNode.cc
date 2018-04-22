@@ -65,8 +65,8 @@ void SensorNode::handleMessage(cMessage *msg)
             //interferenceInfo = getInterference();	//creates interferenceInfo oject
 
             packetLengths[5] = generateDataPacket();
-            Tqueue = measureQueue(packetLengths[5]);
-            Tdeficit = updateDeficit(Tdeficit,Tshare,Tqueue);
+            Tqueue = measureQueue(packetLengths);
+            Tdeficit = updatedeficit(Tdeficit,Tshare,Tqueue);
 
             cMessage *replyRequestInfo = new cMessage("replyRequestInfo", RRI);
             replyRequestInfo -> addPar("nodeID") = nodeID;
@@ -156,7 +156,8 @@ void SensorNode::getTransmitTime(int *schedule)
 int SensorNode::randomPacketLength()
 {
     //randomly assigns packet length
-    return (rand()%10)+1;
+    //return (rand()%10)+1;
+    return 4;
 
 }
 
@@ -211,7 +212,7 @@ int SensorNode::measureQueue(int packetLengths[])
 {
     int numBytes = 0;
     int numPackets;
-    numPackets = sizeof(packetsLengths)/sizeof(*packetsLengths);
+    numPackets = sizeof(packetLengths)/sizeof(*packetLengths);
 
     for (int i = 0; i < numPackets; i++)
     {

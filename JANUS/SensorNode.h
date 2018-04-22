@@ -62,6 +62,8 @@ private:
     double interferenceArray[5] = {1};
     int slot;
     double Tdeficit;
+    double Tqueue;
+    double Tshare;
     double prevTdeficit;
     int prevI;
 
@@ -74,9 +76,9 @@ protected:
     virtual void getTransmitTime(int *schedule);
     virtual int getInterference();
     virtual void determineInterference(double distance,double xNode, double yNode);
-    virtual double updateTdeficit(double Tdeficit, double Tshare, double Tqueue);
+    virtual double updatedeficit(double Tdeficit, double Tshare, double Tqueue);
     virtual int generateDataPacket();
-    virtual int measureQueue(int packetLengths[5]);
+    virtual int measureQueue(int packetLengths[]);
     // void determinePacketLength();
     virtual int randomPacketLength();
     virtual bool getAck(int *requestAckNodes);

@@ -6,6 +6,7 @@
  */
 #include "AP.h"
 
+
 void AP::initialize()
 {
     cModule* c = getModuleByPath("BaseNetwork");
@@ -19,9 +20,10 @@ void AP::initialize()
 
     round = 0;
 
-    Tshare[0] = .003;
-    Tshare[1] = 0.006;
-    Tshare[2] = 0.006;
+
+    //Tshare[0] = .003;
+    //Tshare[1] = 0.006;
+    //Tshare[2] = 0.006;
 
     slotOrder[1] = 1;
     slotOrder[2] = 2;
@@ -30,6 +32,7 @@ void AP::initialize()
 
     numNodes = par("numNodes");
     //initilize conflict map matrix numNodes x numNodes
+
     conflictMap[numNodes][numNodes] = {0};
     //initialize rate matrix numNodes x numnodes
     rateMatrix[numNodes][numNodes]; 
@@ -57,7 +60,7 @@ void AP::handleMessage(cMessage *msg)
             probeRequest -> addPar("slotOrder");
             probeRequest -> addPar("Tshare");
             probeRequest -> par("slotOrder") = slotOrder;
-            probeRequest -> par("Tshare") = Tshare[round];
+            probeRequest -> par("Tshare") = Tshare;
             send(probeRequest, "out");
             round = round + 1;
         }
@@ -72,6 +75,9 @@ void AP::handleMessage(cMessage *msg)
             requestInfo -> par("transmitOrder") = transmitOrder;
             requestInfo -> par("signalStrength") = signalStrength;
             double timeToSend = numNodes * timeIncrement;
+            packetLengths[5] = generateDataPacket();
+            Tqueue = measureQueue(packetLengths);
+            Tdeficit = updatedeficit(Tdeficit,Tshare,Tqueue);
             sendDelayed(requestInfo,simTime() + timeToSend, "out1");
             sendDelayed(requestInfo,simTime() + timeToSend, "out2");
         }
@@ -83,8 +89,8 @@ void AP::handleMessage(cMessage *msg)
             //check if all NodeIDs accounted for, then schedule
             int nodeID = msg -> par("nodeID");
             double signalStrength = msg -> par("signalStrength");
-            int packetLength = msg -> par("packetLength");
-            double interference[5] = {0};
+            packetLengths[5] = msg -> par("packetLengths");
+
             interference[5] = msg -> par("interferenceArray");
 
             double SIR[5] = {0};
@@ -97,7 +103,7 @@ void AP::handleMessage(cMessage *msg)
             {
                 conflictMap[nodeID][j] = SIR[j];
             }
-            schedule(msg);
+            schedule(packetLengths, interference, nodeID);
             //cMessage *scheduler = new cMessage("scheduler");
             scheduler -> addPar("schedule");
             scheduler -> par("schedule") = scheduleSendTimes;
@@ -159,18 +165,66 @@ void AP::schedulePackets()
     sendDelayed(requestAck, simTime() + time1,"out");
 
 }
+int AP::LCU(int packetLengths[], int nodeID)
+{
+    for (int i=0; i<6; i++)
+    {
+        while (P[nodeID][i] != 0)
+        {
 
-void AP::schedule(cMessage *msg)
+        }
+        P[nodeID][i] = packetLengths[i];
+    }
+
+    int size = 0;
+    int num = 0;
+
+    while (size < Tdeficit)
+    {
+        for(int i=0; i<6; i++)
+        {
+            if (P[nodeID][i] !=0)
+            {
+                if (size + P[nodeID][i] <= Tdeficit)
+                {
+                    size = size + P[nodeID][i];
+                    P[nodeID][i] = 0;
+
+                }
+                else
+                {
+                    break;
+                }
+
+            }
+
+        }
+    }
+
+    int numPacketsToSend = size/4;
+    return numPacketsToSend;
+
+    //update P to move packets up queue
+
+
+}
+
+void AP::RTA(double interference[], int nodeID)
+{
+
+
+}
+
+void AP::schedule(int packetLengths[], double interference[], int nodeID)
 {
     //performs scheduling function. takes info from RRI to create schedule
     //schedule determines how long each node has to transmit
     cModule* c = getModuleByPath("BaseNetwork");
 
-    double interference;
-    double packetLength;
     
-    interference =  0;//get interefernce data from RRI msg
-    packetLength =  0;//get packet length data from RRI msg
+    int numPacketsToSend = LCU(packetLengths, nodeID);
+    RTA(interference, nodeID);
+
     
     //update conflict map
   
@@ -181,4 +235,55 @@ void AP::schedule(cMessage *msg)
     //Load Control Unit (LCU) uses Deficit Round Robin DRR    
     schedulePackets();
 
+}
+
+double AP::updatedeficit(double Tdeficit, double Tshare , double Tqueue)
+{
+    Tdeficit = Tshare + prevTdeficit * prevI;
+    prevTdeficit = Tdeficit;
+    if(Tqueue = 0)
+    {
+        prevI = 0;
+    }
+    else
+    {
+        prevI = 1;
+    }
+
+ return Tdeficit;
+}
+
+int AP::measureQueue(int packetLengths[])
+{
+    int numBytes = 0;
+    int numPackets;
+    numPackets = sizeof(packetLengths)/sizeof(*packetLengths);
+
+    for (int i = 0; i < numPackets; i++)
+    {
+        numBytes = numBytes + packetLengths[i];
+    }
+
+    return numBytes;
+}
+
+int AP::randomPacketLength()
+{
+    //randomly assigns packet length
+    //return (rand()%10)+1;
+    return 4;
+
+}
+
+int AP::generateDataPacket()
+{
+
+    int numPackets = (rand()%5)+1;
+    packetLengths[numPackets] = {0};
+    for (int i = 0; i <= numPackets; i++)
+    {
+        packetLengths[i] = randomPacketLength();
+    }
+
+    return packetLengths[5];
 }
