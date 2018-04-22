@@ -8,7 +8,7 @@
 
 void SensorNode::initialize()
 {
-    cModule* c = getModuleByPath("BaseNetwork");
+    cModule *c = getModuleByPath("BaseNetwork");
     
     prob = par("prob");		//probability that sensor will transmit data
     distance = par("distance");
@@ -16,6 +16,9 @@ void SensorNode::initialize()
     timeIncrement = par("timeIncrement");
     signalStrength = par("signalStrength");
     slot = 0;
+    Tdeficit = 0;
+    prevTdeficit = 0;
+    prevI = 1;
 
 
     //Message Types
@@ -37,7 +40,8 @@ void SensorNode::handleMessage(cMessage *msg)
     {
         case PROBE_REQUEST:
         {
-            int Tshare = msg -> par("Tshare");
+            double Tshare = msg -> par("Tshare");
+
             int slotOrder[5] = {0};
             slotOrder[5] = msg -> par("slotOrder");
             slot = slotOrder[nodeID];
@@ -57,12 +61,17 @@ void SensorNode::handleMessage(cMessage *msg)
             int transmitOrder[5] = {0};
             transmitOrder[5] = msg -> par("transmitOrder");
             double APSignalStrength = msg -> par(signalStrength);
-            packetLength = randomPacketLength();	//creates packetLength object
+            //packetLength = randomPacketLength();	//creates packetLength object
             //interferenceInfo = getInterference();	//creates interferenceInfo oject
+
+            packetLengths[5] = generateDataPacket();
+            Tqueue = measureQueue(packetLengths[5]);
+            Tdeficit = updateDeficit(Tdeficit,Tshare,Tqueue);
+
             cMessage *replyRequestInfo = new cMessage("replyRequestInfo", RRI);
             replyRequestInfo -> addPar("nodeID") = nodeID;
             replyRequestInfo -> addPar("signalStrength") = signalStrength;
-            replyRequestInfo -> addPar("packetLength") = packetLength;
+            replyRequestInfo -> addPar("packetLengths") = packetLengths[5];
             //replyRequestInfo -> addPar("interferenceInfo") = interferenceInfo;
             replyRequestInfo -> addPar("intereferenceArray") = interferenceArray;
             double timeToSend = timeIncrement * slot;
@@ -80,14 +89,14 @@ void SensorNode::handleMessage(cMessage *msg)
         case SCHEDULER:
         {
             
-            getTransmitTime(msgInfo);
+            //getTransmitTime(msgInfo);
             cMessage *dataPacket = new cMessage("dataPacket", DATA_PACKET);
             sendDelayed(dataPacket, simTime() + slotTime, "out");
 
         }
         case REQUEST_ACK:
         {
-            getAck(msgInfo);
+            //getAck(msgInfo);
             if (willSendAck == true)
                 {
                     cMessage *ackFlag = new cMessage("ackFlag", ACK_FLAG);
@@ -139,7 +148,7 @@ bool SensorNode::getAck(int *requestAckNodes)
 void SensorNode::getTransmitTime(int *schedule)
 {
     //reads schedule array from shceduler packets and determines what time node transmits
-    
+    //(rand()%10)+1;
     slotTime = 0;
 
 }
@@ -167,6 +176,49 @@ void SensorNode::determineInterference()
 int SensorNode::getInterference()
 {
     return 0;
+}
+
+double SensorNode::updatedeficit(double Tdeficit, double Tshare , double Tqueue)
+{
+    Tdeficit = Tshare + prevTdeficit * prevI;
+    prevTdeficit = Tdeficit;
+    if(Tqueue = 0)
+    {
+        prevI = 0;
+    }
+    else
+    {
+        prevI = 1;
+    }
+
+ return Tdeficit;
+}
+
+int SensorNode::generateDataPacket()
+{
+
+    int numPackets = (rand()%5)+1;
+    packetLengths[numPackets] = {0};
+    for (int i = 0; i <= numPackets; i++)
+    {
+        packetLengths[i] = randomPacketLength();
+    }
+
+    return packetLengths[5];
+}
+
+int SensorNode::measureQueue(int packetLengths[])
+{
+    int numBytes = 0;
+    int numPackets;
+    numPackets = sizeof(packetsLengths)/sizeof(*packetsLengths);
+
+    for (int i = 0; i < numPackets; i++)
+    {
+        numBytes = numBytes + packetLengths[i];
+    }
+
+    return numBytes;
 }
 
 

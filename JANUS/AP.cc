@@ -84,16 +84,19 @@ void AP::handleMessage(cMessage *msg)
             int nodeID = msg -> par("nodeID");
             double signalStrength = msg -> par("signalStrength");
             int packetLength = msg -> par("packetLength");
-            int intereference = msg -> par("interference");
+            double interference[5] = {0};
+            interference[5] = msg -> par("interferenceArray");
 
             double SIR[5] = {0};
-            for (int i=0; i<6; i++)
+            for (int i = 0; i < 6; i++)
             {
-                SIR[i] = signalStrength/interference[i];
+                SIR[i] = signalStrength / interference[i];
             }
 
-            conflictMap[nodeID] = SIR;
-
+            for (int j = 0; j < 6; j++)
+            {
+                conflictMap[nodeID][j] = SIR[j];
+            }
             schedule(msg);
             //cMessage *scheduler = new cMessage("scheduler");
             scheduler -> addPar("schedule");

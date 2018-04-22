@@ -36,7 +36,6 @@ private:
         ,REQUEST_ACK = 6
         ,REQUEST_INFO = 7
         ,SCHEDULER = 8
-        ,RRI = 9
         };
 
     cMessage *registerNode;
@@ -50,7 +49,7 @@ private:
     bool willSend;
     double prob;
     int slotTime;
-    int packetLength;
+    int packetLengths[];
     int interferenceInfo;
     int interference []; 
     bool willSendAck;
@@ -62,6 +61,9 @@ private:
     double signalStrength;
     double interferenceArray[5] = {1};
     int slot;
+    double Tdeficit;
+    double prevTdeficit;
+    int prevI;
 
 protected:
     virtual void initialize();
@@ -72,7 +74,10 @@ protected:
     virtual void getTransmitTime(int *schedule);
     virtual int getInterference();
     virtual void determineInterference(double distance,double xNode, double yNode);
-   // void determinePacketLength();
+    virtual double updateTdeficit(double Tdeficit, double Tshare, double Tqueue);
+    virtual int generateDataPacket();
+    virtual int measureQueue(int packetLengths[5]);
+    // void determinePacketLength();
     virtual int randomPacketLength();
     virtual bool getAck(int *requestAckNodes);
     virtual void finish();
