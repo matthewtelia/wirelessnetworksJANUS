@@ -57,7 +57,7 @@ void AP::handleMessage(cMessage *msg)
         {
             cMessage *probeRequest1 = new cMessage("probeRequest1", PROBE_REQUEST);
             cMessage *probeRequest2 = new cMessage("probeRequest2", PROBE_REQUEST);
-            //EV<<"GOT TO CASE INIT"<< endl;
+            EV<<"GOT TO CASE INIT"<< endl;
 
             //sends probe request showing which request flag slots are used
             //cMessage *probeRequest = new cMessage("probeRequest", PROBE_REQUEST);
@@ -84,10 +84,8 @@ void AP::handleMessage(cMessage *msg)
 
         case REQUEST_FLAG:
         {
-            cMessage *requestInfo1;
-            cMessage *requestInfo2;
-            requestInfo1 = new cMessage("requestInfo1", REQUEST_INFO);
-            requestInfo2 = new cMessage("requestInfo2", REQUEST_INFO);
+            cMessage *requestInfo1 = new cMessage("requestInfo1", REQUEST_INFO);
+            cMessage *requestInfo2 = new cMessage("requestInfo2", REQUEST_INFO);
 
             //recieves flag from sensors that want to transmit data
             bool willSend = msg -> par("willSend");
@@ -111,7 +109,10 @@ void AP::handleMessage(cMessage *msg)
             //packetLengths[5] = generateDataPacket();
             Tqueue = measureQueue(packetLengths);
             Tdeficit = updatedeficit(Tdeficit,Tshare,Tqueue);
+            //EV << "Time Delayed" << timeToSend << endl;
             sendDelayed(requestInfo1,simTime() + timeToSend, "out",0);
+
+            EV << "Message Kind: " << msg -> getKind() << endl; //DEBUG
             //sendDelayed(requestInfo2,simTime() + timeToSend, "out",1);
             break;
         }
@@ -166,6 +167,7 @@ void AP::handleMessage(cMessage *msg)
             int sendTime1 = schedule[1];
             int sendTime2 = schedule[2];
 
+            EV << "Time Delayed" << sendTime1 << endl;
             cMessage *dataPacket = new cMessage("dataPacket", DATA_PACKET);
             sendDelayed(dataPacket,simTime() + sendTime1,"out1");
             //sendDelayed(dataPacket,simTime() + sendTime2,"out2");

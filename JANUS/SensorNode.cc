@@ -16,7 +16,7 @@ void SensorNode::initialize()
     distance = par("distance");
     nodeID = par("nodeID");
     timeIncrement = par("timeIncrement");
-    signalStrength = par("signalStrength");
+    signalStrength = 0; //par("signalStrength");
     slot = 0;
     Tdeficit = 0;
     prevTdeficit = 0;
@@ -67,12 +67,12 @@ void SensorNode::handleMessage(cMessage *msg)
 
         case REQUEST_INFO:
         { 
-            cMessage *replyRequestInfo1 = new cMessage("replyRequestInfo1", RRI);
+            //cMessage *replyRequestInfo1 = new cMessage("replyRequestInfo1", RRI);
             //cMessage *replyRequestInfo2 = new cMessage("replyRequestInfo2", RRI);
 
             int transmitOrder;
             transmitOrder = msg -> par("transmitOrder");
-            double APSignalStrength = msg -> par(signalStrength);
+            //double APSignalStrength = msg -> par(signalStrength);
             //packetLength = randomPacketLength();	//creates packetLength object
             //interferenceInfo = getInterference();	//creates interferenceInfo oject
 
@@ -102,15 +102,18 @@ void SensorNode::handleMessage(cMessage *msg)
             double timeToSend = timeIncrement * slot;
             sendDelayed(replyRequestInfo, simTime() + timeToSend, "out", 0);
             //sendDelayed(replyRequestInfo2, simTime() + timeToSend + e,"out", 1);
-            EV<<"GOT HERE"<<endl;
 
+            EV << "Time Delayed" << timeToSend << endl;
+            EV<<"GOT HERE"<<endl;
+            //EV << "Message Kind: " << msg -> getKind() << endl; //DEBUG
             break;
         }
         
         case RRI:
         {
+            EV<<"GOT HERE DEBUG SENSOR"<<endl;
             int otherNodeID = msg -> par("nodeID");
-            double otherSensorSignalStrength = msg -> par("SignalStrength");
+            double otherSensorSignalStrength = msg -> par("signalStrength");
             interferenceArray[otherNodeID] = otherSensorSignalStrength;
             break;
         }
