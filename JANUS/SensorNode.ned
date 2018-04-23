@@ -15,16 +15,16 @@
 
 simple SensorNode
 {
-        parameters:
-            double distance = default(1);
-            int nodeID = default(1);
-            double prob = default(0.5);
-            double timeIncrement = default(0.1);
-            double signalStrength = default(.005);
-	gates:
-	    input in[];
-	    output out1[];
-	    output out2[];
-	    
-	    
+    parameters:
+        double distance = default(1);
+        int nodeID = default(1);
+        double prob = default(0.5);
+        double timeIncrement = default(0.1);
+        double signalStrength = default(.005);
+    gates:
+        input in[2];
+        output out[2];
+	    //output out2;
+
+
 }

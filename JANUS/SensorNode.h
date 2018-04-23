@@ -27,7 +27,8 @@ public:
     double yAP;
 
 private:
-    enum{REGISTER_NODE = 7
+    enum{
+        REGISTER_NODE = 7
         ,REQUEST_FLAG = 8
         ,RRI = 9
         ,DATA_PACKET = 6
@@ -59,6 +60,7 @@ private:
     //int length;
     int nodeID;
     int numNodes = 2;
+    double e = 0.000001;
     double timeIncrement;
     double signalStrength;
     double interferenceArray[5] = {1};

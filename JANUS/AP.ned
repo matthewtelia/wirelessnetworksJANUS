@@ -21,7 +21,8 @@ simple AP
             double timeIncrement = default(0.1);
             double signalStrength = default(1);
         gates:
-	        input in[];
-	        output out1[];
+	        input in[2];
+	        output out[2];
+	        //output out2;
 	        //output out2[];
 }

@@ -15,21 +15,28 @@
 
 network Base_Network
 {
-	parameters:
-	    
-	submodules:
-	
-		SensorNode1: SensorNode;
-		SensorNode2: SensorNode;
-		AP: AP;
+    parameters:
+
+        @display("bgb=706,452");
+    submodules:
+
+        SensorNode1: SensorNode {
+            @display("p=521,332");
+        }
+        SensorNode2: SensorNode {
+            @display("p=169,116");
+        }
+        AP: AP {
 		//WirelessChannel: WirelessChannel;
-		
-	connections:
-	            
-	    AP.out1++ --> SensorNode1.in++;
-	    AP.out1++ --> SensorNode2.in++;
-	    SensorNode1.out1++ --> AP.in++;
-	    SensorNode1.out1++ --> SensorNode2.in++;
-	    SensorNode2.out2++ --> AP.in++;
-	    SensorNode2.out2++ --> SensorNode1.in++;
+
+            @display("p=521,52");
+        }
+    connections:
+
+        AP.out[0] --> SensorNode1.in++;
+        AP.out[1] --> SensorNode2.in++;
+        SensorNode1.out[0] --> AP.in++;
+        SensorNode1.out[1] --> SensorNode2.in++;
+        SensorNode2.out[0] --> AP.in++;
+        SensorNode2.out[1] --> SensorNode1.in++;
 }

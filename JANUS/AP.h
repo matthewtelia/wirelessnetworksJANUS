@@ -34,6 +34,7 @@ private:
     cMessage *initialProbeRequest;
     cMessage *probeRequest;
     cMessage *requestInfo;
+
     cMessage *scheduler;
     cMessage *requestAck;
     cMessage *ackFlag;
@@ -47,6 +48,7 @@ private:
     int nodeID;
     double time0;
     double time1;
+    double e = 0.000001;
     double conflictMap[][5];
     double rateMatrix[][5];
     double timeIncrement;
