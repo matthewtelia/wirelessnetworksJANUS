@@ -26,10 +26,10 @@ network Base_Network
 		
 	connections:
 	            
-	    AP.out1 --> SensorNode1.in;
-	    AP.out2 --> SensorNode2.in;
-	    SensorNode1.out1 --> AP.in;
-	    SensorNode1.out2 --> SensorNode2.in;
-	    SensorNode2.out1 --> AP.in;
-	    SensorNode2.out2 --> SensorNode1.in;
+	    AP.out1++ --> SensorNode1.in++;
+	    AP.out1++ --> SensorNode2.in++;
+	    SensorNode1.out1++ --> AP.in++;
+	    SensorNode1.out1++ --> SensorNode2.in++;
+	    SensorNode2.out2++ --> AP.in++;
+	    SensorNode2.out2++ --> SensorNode1.in++;
 }

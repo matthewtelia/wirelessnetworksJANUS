@@ -27,15 +27,16 @@ public:
     double yAP;
 
 private:
-    enum{REGISTER_NODE = 0
-        ,REQUEST_FLAGS = 1
-        ,RRI = 2
-        ,DATA_PACKET = 3
-        ,ACK_FLAG = 4
+    enum{REGISTER_NODE = 7
+        ,REQUEST_FLAG = 8
+        ,RRI = 9
+        ,DATA_PACKET = 6
+        ,ACK_FLAG = 5
         ,PROBE_REQUEST = 1
-        ,REQUEST_ACK = 6
-        ,REQUEST_INFO = 7
-        ,SCHEDULER = 8
+        ,REQUEST_ACK = 4
+        ,REQUEST_INFO = 2
+        ,SCHEDULER = 3
+        ,INIT = 0
         };
 
     cMessage *registerNode;
@@ -72,11 +73,11 @@ protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg) override;
     virtual void determineInterference();
-    virtual void determinePacketLength();
+    //virtual void determinePacketLength();
     virtual bool randomDataTransmit();
-    virtual void getTransmitTime(int *schedule);
+    //virtual void getTransmitTime(int *schedule);
     virtual int getInterference();
-    virtual void determineInterference(double distance,double xNode, double yNode);
+    //virtual void determineInterference(double distance,double xNode, double yNode);
     virtual double updatedeficit(double Tdeficit, double Tshare, double Tqueue);
     virtual int generateDataPacket();
     virtual int measureQueue(int packetLengths[]);

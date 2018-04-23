@@ -22,14 +22,14 @@ public:
 private:
     enum{INIT=0
         ,PROBE_REQUEST = 1
-        ,REQUEST_INFO = 1
-        ,SCHEDULER = 2
-        ,REQUEST_ACK = 3
-        ,ACK_FLAG = 4
-        ,DATA_PACKET = 5
-        ,REGISTER_NODE = 0
-        ,REQUEST_FLAG = 7
-        ,RRI = 8};
+        ,REQUEST_INFO = 2
+        ,SCHEDULER = 3
+        ,REQUEST_ACK = 4
+        ,ACK_FLAG = 5
+        ,DATA_PACKET = 6
+        ,REGISTER_NODE = 7
+        ,REQUEST_FLAG = 8
+        ,RRI = 9};
 
     cMessage *initialProbeRequest;
     cMessage *probeRequest;
@@ -69,7 +69,7 @@ protected:
     virtual void handleMessage(cMessage *msg) override;
     virtual void schedule(int packetLengths[], double interference[], int nodeID);
     virtual void registration();
-    virtual void schedulePackets();
+    //virtual void schedulePackets();
     virtual void transmitPoll(bool willSend, int nodeID);
     virtual double updatedeficit(double Tdeficit, double Tshare , double Tqueue);
     virtual int generateDataPacket();

@@ -6,6 +6,7 @@
  */
 #include "AP.h"
 
+Define_Module(AP);
 
 void AP::initialize()
 {
@@ -62,7 +63,8 @@ void AP::handleMessage(cMessage *msg)
             probeRequest -> addPar("Tshare");
             probeRequest -> par("slotOrder") = slotOrder;
             probeRequest -> par("Tshare") = Tshare;
-            send(probeRequest, "out");
+            send(probeRequest, "out1", 0);
+            //send(probeRequest, "out2", 0);
             round = round + 1;
         }
 
@@ -110,8 +112,10 @@ void AP::handleMessage(cMessage *msg)
             }
             schedule(packetLengths, interference, nodeID);
             //cMessage *scheduler = new cMessage("scheduler");
-            scheduler -> addPar("schedule");
-            scheduler -> par("schedule") = scheduleSendTimes;
+            scheduler -> addPar("schedule0");
+            scheduler -> addPar("schedule1");
+            scheduler -> addPar("schedule2");
+            //scheduler -> par("schedule") = scheduleSendTimes;
 
             double timeToSend = numNodes * timeIncrement;
             sendDelayed(scheduler, simTime() + timeToSend, "out1");
@@ -123,13 +127,17 @@ void AP::handleMessage(cMessage *msg)
         {
             //recieves scheduler packet with data transmit schedule
             int schedule[numNodes] = {0};
-            schedule[numNodes] = msg -> par("schedule");
 
-            int sendTime = schedule[nodeID];
+            scheduler -> par("schedule0") = schedule[0];
+            scheduler -> par("schedule1") = schedule[1];
+            scheduler -> par("schedule2") = schedule[2];
+
+            int sendTime1 = schedule[1];
+            int sendTime2 = schedule[2];
 
             cMessage *dataPacket = new cMessage("dataPacket", DATA_PACKET);
-            sendDelayed(dataPacket,simTime() + sendTime,"out1");
-            sendDelayed(dataPacket,simTime() + sendTime,"out2");
+            sendDelayed(dataPacket,simTime() + sendTime1,"out1");
+            sendDelayed(dataPacket,simTime() + sendTime2,"out2");
             
         }
 
@@ -307,4 +315,9 @@ int AP::generateDataPacket()
 
     return packetLengths;
     */
+}
+
+void AP::finish()
+{
+
 }

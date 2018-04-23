@@ -6,6 +6,8 @@
  */
 #include "SensorNode.h"
 
+Define_Module(SensorNode);
+
 void SensorNode::initialize()
 {
     cModule *c = getModuleByPath("BaseNetwork");
@@ -24,7 +26,7 @@ void SensorNode::initialize()
 
     //Message Types
     registerNode = new cMessage("registerNode", REGISTER_NODE);
-    requestFlag = new cMessage("requestFlag", REQUEST_FLAGS);
+    requestFlag = new cMessage("requestFlag", REQUEST_FLAG);
     replyRequestInfo = new cMessage("replyRequestInfo", RRI);
     dataPacket = new cMessage("dataPacket", DATA_PACKET);
     ackFlag = new cMessage("ackFlag", ACK_FLAG);
@@ -52,8 +54,9 @@ void SensorNode::handleMessage(cMessage *msg)
             willSend = randomDataTransmit();
             //nodeID = //create nodeID object
             //cMessage *requestFlag = new cMessage("requestFlag", REQUEST_FLAG);
+            requestFlag -> addPar("willSend");
             requestFlag -> par("nodeID");
-            requestFlag -> par("willSend");
+            requestFlag -> par("willSend") = willSend;
             sendDelayed(requestFlag, simTime() + timeToSend, "out1");
         }
 
@@ -97,7 +100,9 @@ void SensorNode::handleMessage(cMessage *msg)
         {
             //getTransmitTime(msgInfo);
             int schedule[numNodes] = {0};
-            schedule = msg -> par("scheduler");
+            schedule[0] = msg -> par("schedule0");
+            schedule[1] = msg -> par("schedule1");
+            schedule[2] = msg -> par("schedule2");
             
             slotTime = schedule[nodeID];
 
@@ -153,7 +158,7 @@ bool SensorNode::getAck(int *requestAckNodes)
         }
 
     willSendAck = false;
- 
+    return willSendAck;
 }
 
 //void SensorNode::getTransmitTime(int *schedule)
@@ -234,6 +239,11 @@ int SensorNode::measureQueue(int packetLengths[])
     }
 
     return numBytes;
+}
+
+void SensorNode::finish()
+{
+
 }
 
 

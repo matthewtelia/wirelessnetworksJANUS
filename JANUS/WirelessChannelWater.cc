@@ -6,6 +6,8 @@ ensorNode.cc
  */
 #include "WirelessChannelWater.h"
 
+Define_Module(WirelessChannelWater);
+
 void WirelessChannelWater::initialize()
 {
     cModule* c = getModuleByPath("BaseNetwork");
@@ -74,10 +76,11 @@ void WirelessChannelWater::handleMessage(cMessage *msg)
 
   }
 }
- //*
- //*  Created on: Apr 9, 2018
- //*      Author: matt
- //*/
+
+void WirelessChannelWater::finish()
+{
+
+}
 
 
 
