@@ -63,7 +63,7 @@ private:
     double e = 0.000001;
     double timeIncrement;
     double signalStrength;
-    double interferenceArray[5] = {1};
+    double interferenceArray[5] = {1,1,1,1,1};
     int slot;
     double Tdeficit;
     double Tqueue;

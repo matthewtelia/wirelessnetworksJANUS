@@ -42,15 +42,17 @@ private:
 
 
     double Tshare;
-    int round; 
+    int round = 0;
     int numberOfSlots=5;
-    int numNodes;
+    int numNodes = 2;
     int nodeID;
     double time0;
     double time1;
+    int receivedDataPackets;
+    int expectedDataPackets;
     double e = 0.000001;
-    double conflictMap[][5];
-    double rateMatrix[][5];
+    double conflictMap[2][5];
+    double rateMatrix[2][5];
     double timeIncrement;
     double signalStrength;
     double scheduleSendTimes[5] = {0};
@@ -58,7 +60,7 @@ private:
     int packetLengths[5] = {0};
     double Tqueue;
     double Tdeficit;
-    double interference[5] = {0};
+    double interference[5] = {1,1,1,1,1};
     int prevI;
     double prevTdeficit;
     int numPacketsArray[2] = {0};

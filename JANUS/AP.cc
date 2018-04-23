@@ -26,19 +26,25 @@ void AP::initialize()
     //Tshare[1] = 0.006;
     //Tshare[2] = 0.006;
 
-    //slotOrder[1] = 1;
+    //slotOrder[1] = 1;in
     //slotOrder[2] = 2;
 
-    timeIncrement = par("timeIncrement");
+    //timeIncrement = par("timeIncrement");
+    timeIncrement = 0.1;
     signalStrength = par("signalStrength");
 
-    numNodes = par("numNodes");
-    nodeID = par("nodeID");
+    //numNodes = par("numNodes");
+    numNodes = 2;
+    receivedDataPackets = 0;
+    expectedDataPackets = 1;
+    signalStrength = 1;
+
+    nodeID = 1;
     //initilize conflict map matrix numNodes x numNodes
 
     conflictMap[numNodes][numNodes] = {0};
     //initialize rate matrix numNodes x numnodes
-    rateMatrix[numNodes][numNodes]; 
+    rateMatrix[numNodes][numNodes];
 
 
     scheduleAt(simTime(), initialProbeRequest);
@@ -74,6 +80,10 @@ void AP::handleMessage(cMessage *msg)
             probeRequest2 -> par("slotOrder") = 1;
             probeRequest2 -> par("Tshare") = Tshare;
             round = round + 1;
+            if (round >= 3)
+            {
+                finish();
+            }
             send(probeRequest1, "out", 0);
             //send(probeRequest2, "out", 1);
             //send(probeRequest, "out2", 0);
@@ -112,8 +122,10 @@ void AP::handleMessage(cMessage *msg)
             //EV << "Time Delayed" << timeToSend << endl;
             sendDelayed(requestInfo1,simTime() + timeToSend, "out",0);
 
+
             EV << "Message Kind: " << msg -> getKind() << endl; //DEBUG
             //sendDelayed(requestInfo2,simTime() + timeToSend, "out",1);
+            delete(msg);
             break;
         }
 
@@ -121,31 +133,38 @@ void AP::handleMessage(cMessage *msg)
         {
             //recieves intereference and packet length data from sensor node
             //get NodeID object
-            //check if all NodeIDs accounted for, then schedule
+            //check if all NodeIDs accounted for, then schedulei
             EV<<"GOT HERE IN AP RRI"<<endl;
-            int nodeID = msg -> par("nodeID");
-            double signalStrength = msg -> par("signalStrength");
-            packetLengths[0] = msg -> par("packetLengths0");
-            packetLengths[1] = msg -> par("packetLengths1");
+            //int nodeID = msg -> par("nodeID");
+            //ouble signalStrength = msg -> par("signalStrength");
+            //double signalStrength = 1;
+            //packetLengths[0] = msg -> par("packetLengths0");
+            //packetLengths[1] = msg -> par("packetLengths1");
 
-            interference[0] = msg -> par("interferenceArray0");
-            interference[1] = msg -> par("interferenceArray1");
-
+            //interference[0] = msg -> par("interferenceArray0");
+            //interference[1] = msg -> par("interferenceArray1");
+            //packetLengths[0] = 1;
+            //packetLengths[1] = 1;
+            /*
             double SIR[5] = {0};
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 2; i++)
             {
                 SIR[i] = signalStrength / interference[i];
             }
 
-            for (int j = 0; j < 6; j++)
+            for (int j = 0; j < 2; j++)
             {
                 conflictMap[nodeID][j] = SIR[j];
             }
-            schedule(packetLengths, interference, nodeID);
+            */
+            //schedule(packetLengths, interference, nodeID);
             //cMessage *scheduler = new cMessage("scheduler");
-            scheduler -> addPar("schedule0") = schedulerArray[0];
-            scheduler -> addPar("schedule1") = schedulerArray[1];
-            scheduler -> addPar("schedule2") = schedulerArray[2];
+            //scheduler -> addPar("schedule0");
+            //scheduler -> par("schedule0")= schedulerArray[0];
+            //scheduler -> addPar("schedule1");
+            //scheduler -> par("schedule1")= schedulerArray[1];
+            //scheduler -> addPar("schedule2");
+            //scheduler -> par("schedule2")= schedulerArray[2];
             //scheduler -> par("schedule") = scheduleSendTimes;
 
             double timeToSend = numNodes * timeIncrement;
@@ -160,16 +179,16 @@ void AP::handleMessage(cMessage *msg)
             //recieves scheduler packet with data transmit schedule
             int schedule[numNodes] = {0};
 
-            scheduler -> par("schedule0") = schedule[0];
-            scheduler -> par("schedule1") = schedule[1];
-            scheduler -> par("schedule2") = schedule[2];
+            //scheduler -> par("schedule0") = schedule[0];
+            //scheduler -> par("schedule1") = schedule[1];
+            //scheduler -> par("schedule2") = schedule[2];
 
             int sendTime1 = schedule[1];
-            int sendTime2 = schedule[2];
+            //int sendTime2 = schedule[2];
 
             EV << "Time Delayed" << sendTime1 << endl;
             cMessage *dataPacket = new cMessage("dataPacket", DATA_PACKET);
-            sendDelayed(dataPacket,simTime() + sendTime1,"out1");
+            sendDelayed(dataPacket,simTime() + sendTime1,"out", 0);
             //sendDelayed(dataPacket,simTime() + sendTime2,"out2");
             break;
             
@@ -178,12 +197,28 @@ void AP::handleMessage(cMessage *msg)
         case DATA_PACKET:
         {
             //recieves data packet, records information
+            receivedDataPackets = receivedDataPackets + 1;
+            EV<<"AP has recieved: "<<receivedDataPackets<<endl;
+            if (receivedDataPackets == expectedDataPackets)
+            {
+                send(requestAck, "out", 0);
+                //send(requestAck, "out", 1);
+            }
             break;
         }
         
         case ACK_FLAG:
         {
             //recieves Ack flag, records information
+            EV<<"Received ACK"<<endl;
+            //cancelAndDelete(probeRequest);
+            //cancelAndDelete(requestInfo);
+            //cancelAndDelete(scheduler);
+            //cancelAndDelete(requestAck);
+
+
+            //scheduleAt(simTime(), initialProbeRequest);
+
             break;
         
         }
@@ -319,9 +354,9 @@ int AP::measureQueue(int packetLengths[])
 {
     int numBytes = 0;
     int numPackets;
-    numPackets = sizeof(packetLengths)/sizeof(*packetLengths);
+    //numPackets = sizeof(packetLengths)/sizeof(*packetLengths);
 
-    for (int i = 0; i < numPackets; i++)
+    for (int i = 0; i < 2; i++)
     {
         numBytes = numBytes + packetLengths[i];
     }
