@@ -52,12 +52,8 @@ private:
     double prob;    //probability node will send data
     int slotTime;   //time data is transmitted after schedule packet recieved
     int packetLengths[];    //number of packets to send
-    //int interferenceInfo;
-    //int interference [];
     bool willSendAck;
-    //double deficit;
     int originalSignal;
-    //int length;
     int nodeID;
     int numNodes = 2;
     double e = 0.000001;
@@ -75,15 +71,11 @@ protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg) override;
     virtual void determineInterference();
-    //virtual void determinePacketLength();
     virtual bool randomDataTransmit();
-    //virtual void getTransmitTime(int *schedule);
     virtual int getInterference();
-    //virtual void determineInterference(double distance,double xNode, double yNode);
     virtual double updatedeficit(double Tdeficit, double Tshare, double Tqueue);
     virtual int generateDataPacket();
     virtual int measureQueue(int packetLengths[]);
-    // void determinePacketLength();
     virtual int randomPacketLength();
     virtual bool getAck(int *requestAckNodes);
     virtual void finish();

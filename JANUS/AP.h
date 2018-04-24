@@ -19,6 +19,7 @@ class AP : public cSimpleModule
 public:
     int slotOrder[5]={0};
     int transmitOrder[5];
+
 private:
     enum{INIT=0
         ,PROBE_REQUEST = 1
@@ -44,7 +45,7 @@ private:
     double Tshare;
     int round = 0;
     int numberOfSlots=5;
-    int numNodes = 2;
+    int numNodes;
     int nodeID;
     double time0;
     double time1;
@@ -66,12 +67,15 @@ private:
     int numPacketsArray[2] = {0};
     int sendOrder[2] = {0};
     int schedulerArray[2] = {0};
+    int gate = 0;
+    int APNodeID;
+    int numPacketsToSend;
     //int sendOrder[2] = {0};
 
 protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg) override;
-    virtual void schedule(int packetLengths[], double interference[], int nodeID);
+    virtual void schedule(int nodeID);
     virtual void registration();
     //virtual void schedulePackets();
     virtual void transmitPoll(bool willSend, int nodeID);
@@ -79,12 +83,10 @@ protected:
     virtual int generateDataPacket();
     virtual int randomPacketLength();
     virtual int measureQueue(int packetLengths[]);
-    virtual void RTA(double interference[], int nodeID, int numNodes);
-    virtual int LCU(int packetLengths[], int nodeID);
+    virtual void RTA(int nodeID, int numNodes);
+    virtual void LCU(int nodeID);
     virtual void finish();
 };
-
-
 
 
 #endif /* AP_H_ */
